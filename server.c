@@ -24,10 +24,13 @@ void send_message(char* message);
 int main(int argc, char const *argv[])
 {
     start_networking();
-    char message[BUFFER_SIZE];
-    strcpy(message, "hey there from server\n");
+    printf("Client Said: %s\n", receive_message());
 
-    printf("%s\n", receive_message());
+
+    char message[BUFFER_SIZE];
+    strcpy(message, "Hey from Server\n");
+    send_message(message);
+    printf("Hello from server to client sent\n");
     return 0;
 }
 

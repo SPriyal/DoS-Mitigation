@@ -22,10 +22,12 @@ int main(int argc, char const *argv[])
 {
     start_networking();
     char *message[BUFFER_SIZE];
-    strcpy(message, "Hello from client\n");
-
+    strcpy(message, "Hello from client");
     send_message(message);
     printf("Hello message sent\n");
+
+
+    printf("Server Said: %s\n", receive_message());
 
     return 0;
 }
