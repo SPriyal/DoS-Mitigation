@@ -9,6 +9,14 @@
 #include "openssl/sha.h"
 #define PORT 8080
 
+
+long BUFFER_SIZE = 4096;
+int server_fd, sock;
+char buffer[4096] = {0};
+int opt = 1;
+struct sockaddr_in address;
+int addrlen = sizeof(address);
+
 void start_networking();
 char* receive_message();
 void send_message(char* message);

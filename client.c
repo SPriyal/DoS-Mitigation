@@ -5,9 +5,14 @@
 #include <string.h>
 #include <unistd.h>
 #include <openssl/sha.h>
-#include <string>
+#include <string.h>
 #define PORT 8080
-using namespace std;
+
+
+long BUFFER_SIZE = 4096;
+int sock = 0;
+struct sockaddr_in address,serv_addr;
+
 
 void start_networking();
 char* receive_message();
