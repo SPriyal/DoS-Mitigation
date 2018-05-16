@@ -17,8 +17,8 @@ struct sockaddr_in address,serv_addr;
 char hash[SHA_DIGEST_LENGTH*2] = {0};
 char hash2[SHA_DIGEST_LENGTH*2] = {0};
 char* itob(int i);
-
-
+char* result[SHA_DIGEST_LENGTH*3] = {0};
+char* pre_image[SHA_DIGEST_LENGTH*2] = {0};
 
 void start_networking();
 char* receive_message();
@@ -37,12 +37,21 @@ int main(int argc, char const *argv[])
     while(1){
       memset(&hash[0], '\0', sizeof(hash));
       strcpy(hash, receive_message());
+      memset(&hash2[0], '\0', sizeof(hash2));
+      memset(&result[0], '\0', sizeof(result));
+      
       if(strcmp(hash, "1") == 0){
         break;
       }
       send_message("Got the hash value\n");
+      
+      strcpy(pre_image, receive_message());
 
       for(int i=0; i<65536; i++){
+	memset(&result[0], '\0', sizeof(result));
+        strncpy(result, pre_image, sizeof(pre_image));
+        strcat(result, itob(i));
+        hash_string(result);
         if(check_hashes() == 1){
           send_message(itob(i));
           receive_message();
@@ -103,9 +112,6 @@ void start_networking(){
 }
 
 
-
-
-
 int check_hashes(){
   if(strcmp(hash, hash2) == 0){
     return 1;
@@ -128,7 +134,13 @@ char* itob(int i) {
 }
 
 
-
+void hash_string(char* s) {
+  unsigned char temp[SHA_DIGEST_LENGTH] = {'\0'};
+  SHA1((unsigned char*)s, strlen(s), temp);
+  for(int i=0; i<SHA_DIGEST_LENGTH; i++){
+    sprintf((char*)&(hash2[i*2]), "%02x", temp[i]);
+  }
+}
 
 
 

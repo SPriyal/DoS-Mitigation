@@ -23,6 +23,9 @@ char* removed;
 char* random_string[4096];
 char* generate_puzzle();
 char* binary;
+char pre_image[4096] = {0};
+
+
 
 void start_networking();
 char* receive_message();
@@ -33,8 +36,8 @@ int main(int argc, char const *argv[])
 
 
     int count = 0;
-
-
+    struct timeval t1, t2;
+    double elapsedTime;
 
     start_networking();
     printf("Client Said: %s\n", receive_message());
@@ -46,18 +49,30 @@ int main(int argc, char const *argv[])
     printf("Hello from server to client sent\n");
 
 
-
+    gettimeofday(&t1, NULL);
     while( count < 1000){
+	memset(hash, '\0', sizeof(hash));
+        memset(hash2, '\0', sizeof(hash2));
+        memset(pre_image, '\0', sizeof(pre_image));
 	generate_puzzle();
 	send_message(hash);
       	receive_message();
+	printf("Client Said: %s\n", receive_message());
 	send_message(removed);
       	receive_message();
 	send_message("Received your request\n");
       	receive_message();
 	count++;
     }
+    
 
+
+    gettimeofday(&t2, NULL);
+    elapsedTime = (t2.tv_sec - t1.tv_sec) * 1000.0;
+    elapsedTime += (t2.tv_usec - t1.tv_usec) / 1000.0;
+    elapsedTime = elapsedTime/1000;
+    printf("TIME ELAPSED: %f\n", elapsedTime);
+    send_message("1");
 
 
 
