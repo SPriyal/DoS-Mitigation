@@ -19,6 +19,16 @@ char hash2[SHA_DIGEST_LENGTH*2] = {0};
 char* itob(int i);
 char* result[SHA_DIGEST_LENGTH*3] = {0};
 char* pre_image[SHA_DIGEST_LENGTH*2] = {0};
+struct sockaddr_in address,serv_addr;
+void hash_string(char*);
+
+
+
+//int valread;
+//char* removed;
+//char guess[8];
+
+
 
 void start_networking();
 char* receive_message();
@@ -40,32 +50,36 @@ int main(int argc, char const *argv[])
       memset(&hash2[0], '\0', sizeof(hash2));
       memset(&result[0], '\0', sizeof(result));
       
-      if(strcmp(hash, "1") == 0){
+      if(strcmp(hash, "1") == 0)
+      {
         break;
       }
-      send_message("Got the hash value\n");
-      
-      strcpy(pre_image, receive_message());
 
-      for(int i=0; i<65536; i++){
-	memset(&result[0], '\0', sizeof(result));
+      send_message("Got the hash value\n");
+      strcpy(pre_image, receive_message());
+      
+      for(int i=0; i<65536; i++)
+      {
+	      memset(&result[0], '\0', sizeof(result));
         strncpy(result, pre_image, sizeof(pre_image));
         strcat(result, itob(i));
         hash_string(result);
-        if(check_hashes() == 1){
+        if(check_hashes() == 1)
+        {
           send_message(itob(i));
           receive_message();
+          printf("Solved\n");
           send_message("Thank you");
           break;
-        } else if(i == 65535){
+        } 
+        else if(i == 65535)
+        {
           printf("Can't solve the puzzle\n\n");
           send_message("can't solve");
           receive_message();
           send_message("Thank you");
         }
       }
-
-
     }
 
 

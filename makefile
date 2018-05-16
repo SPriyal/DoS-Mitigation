@@ -1,7 +1,7 @@
 CC:=gcc
 CFLAGS:= -w -pthread -lcrypto
 
-all:	server client
+all:	clean server client 
 
 server:
 	$(CC) server.c $(CFLAGS) -o server
