@@ -14,6 +14,12 @@ int sock = 0;
 struct sockaddr_in address,serv_addr;
 
 
+char hash[SHA_DIGEST_LENGTH*2] = {0};
+char hash2[SHA_DIGEST_LENGTH*2] = {0};
+char* itob(int i);
+
+
+
 void start_networking();
 char* receive_message();
 void send_message(char* message);
@@ -25,9 +31,34 @@ int main(int argc, char const *argv[])
     strcpy(message, "Hello from client");
     send_message(message);
     printf("Hello message sent\n");
-
-
     printf("Server Said: %s\n", receive_message());
+
+
+    while(1){
+      memset(&hash[0], '\0', sizeof(hash));
+      strcpy(hash, receive_message());
+      if(strcmp(hash, "1") == 0){
+        break;
+      }
+      send_message("Got the hash value\n");
+
+      for(int i=0; i<65536; i++){
+        if(check_hashes() == 1){
+          send_message(itob(i));
+          receive_message();
+          send_message("Thank you");
+          break;
+        } else if(i == 65535){
+          printf("Can't solve the puzzle\n\n");
+          send_message("can't solve");
+          receive_message();
+          send_message("Thank you");
+        }
+      }
+
+
+    }
+
 
     return 0;
 }
@@ -70,3 +101,38 @@ void start_networking(){
 
 
 }
+
+
+
+
+
+int check_hashes(){
+  if(strcmp(hash, hash2) == 0){
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+char* itob(int i) {
+   static char bits[16] = {'0'};
+   for(int i=0; i<16; i++){
+     bits[i] = '0';
+   }
+   int bits_index = 15;
+   while ( i > 0 ) {
+      bits[bits_index--] = (i & 1) + '0';
+      i = ( i >> 1);
+   }
+   return bits;
+}
+
+
+
+
+
+
+
+
+
+

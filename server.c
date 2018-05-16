@@ -17,12 +17,25 @@ int opt = 1;
 struct sockaddr_in address;
 int addrlen = sizeof(address);
 
+char hash[SHA_DIGEST_LENGTH*2] = {0};
+char hash2[SHA_DIGEST_LENGTH*2] = {0};
+char* removed;
+char* random_string[4096];
+char* generate_puzzle();
+char* binary;
+
 void start_networking();
 char* receive_message();
 void send_message(char* message);
 
 int main(int argc, char const *argv[])
 {
+
+
+    int count = 0;
+
+
+
     start_networking();
     printf("Client Said: %s\n", receive_message());
 
@@ -31,6 +44,23 @@ int main(int argc, char const *argv[])
     strcpy(message, "Hey from Server\n");
     send_message(message);
     printf("Hello from server to client sent\n");
+
+
+
+    while( count < 1000){
+	generate_puzzle();
+	send_message(hash);
+      	receive_message();
+	send_message(removed);
+      	receive_message();
+	send_message("Received your request\n");
+      	receive_message();
+	count++;
+    }
+
+
+
+
     return 0;
 }
 
@@ -84,3 +114,67 @@ void start_networking(){
 
 
 }
+
+
+
+
+
+
+
+
+int random_number(){
+  return rand() % 9000 + 1000;
+}
+
+void number_to_string(int num) {
+  char temp[12];
+  sprintf(temp, "%d", num);
+  strcpy(random_string, temp);
+}
+
+
+void hash_string(char* s) {
+  memset(&hash[0], '\0', sizeof(hash));
+  unsigned char temp[SHA_DIGEST_LENGTH] = {'0'};
+  SHA1((unsigned char*)s, strlen(s), temp);
+  for(int i=0; i<SHA_DIGEST_LENGTH; i++){
+    sprintf((char*)&(hash[i*2]), "%02x", temp[i]);
+  }
+}
+
+char* stringToBinary(char* s) {
+  if(s == NULL) return 0;
+    size_t len = strlen(s);
+    char *binary = malloc(len*8 + 1);
+    binary[0] = '\0';
+    for(size_t i = 0; i < len; ++i) {
+        char ch = s[i];
+        for(int j = 7; j >= 0; --j){
+            if(ch & (1 << j)) {
+                strcat(binary,"1");
+            } else {
+                strcat(binary,"0");
+            }
+        }
+    }
+    return binary;
+}
+
+
+char* remove_bits(int k, char* s){
+  char* temp = s;
+  temp[strlen(s)-k] = 0;
+  return temp;
+}
+
+char* generate_puzzle(){
+  char message[12];
+  int num = random_number();
+  number_to_string(num);
+  hash_string(random_string);
+  strcpy(hash2, hash);
+  binary = stringToBinary(hash2);
+  hash_string(binary);
+  removed = remove_bits(16, binary);
+}
+
