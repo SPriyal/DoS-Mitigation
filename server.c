@@ -32,34 +32,26 @@ void hash_string(char*);
 char* stringToBinary(char* s);
 char* binary;
 char* removed;
-
-//int valread;
-//char* test;
-
 void start_networking();
 char* receive_message();
 void send_message(char* message);
 
 int main(int argc, char const *argv[])
 {
-
-
     int count = 0;
     struct timeval t1, t2;
     double elapsedTime;
     srand(time(NULL));
     start_networking();
     printf("Client Said: %s\n", receive_message());
-
-
     char message[BUFFER_SIZE];
     strcpy(message, "Hey from Server\n");
     send_message(message);
     printf("Hello from server to client sent\n");
 
-
     gettimeofday(&t1, NULL);
-    while( count < 1000)
+   
+    while( count < 20)
     {
         printf("\n Iteration: %d\n", count);
 	      memset(hash, '\0', sizeof(hash));
@@ -77,9 +69,8 @@ int main(int argc, char const *argv[])
 	      count++;
     }
     
-
-
     gettimeofday(&t2, NULL);
+ 
     elapsedTime = (t2.tv_sec - t1.tv_sec) * 1000.0;
     elapsedTime += (t2.tv_usec - t1.tv_usec) / 1000.0;
     elapsedTime = elapsedTime/1000;
@@ -88,17 +79,20 @@ int main(int argc, char const *argv[])
     return 0;
 }
 
-void send_message(char* message){
+void send_message(char* message)
+{
     send(sock , message , strlen(message) , 0 );
 }
 
-char* receive_message(){
+char* receive_message()
+{
     memset(&buffer[0], '\0', sizeof(buffer));
     read( sock , buffer, BUFFER_SIZE);
     return buffer;
 }
 
-void start_networking(){
+void start_networking()
+{
     // Creating socket file descriptor
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0)
     {
@@ -135,48 +129,49 @@ void start_networking(){
         perror("accept");
         exit(EXIT_FAILURE);
     }
-
-
 }
 
-
-
-
-
-
-
-
-int random_number(){
+int random_number()
+{
   return rand() % 9000 + 1000;
 }
 
-void number_to_string(int num) {
+void number_to_string(int num) 
+{
   char temp[12];
   sprintf(temp, "%d", num);
   strcpy(random_string, temp);
 }
 
 
-void hash_string(char* s) {
+void hash_string(char* s) 
+{
   memset(&hash[0], '\0', sizeof(hash));
   unsigned char temp[SHA_DIGEST_LENGTH] = {'0'};
   SHA1((unsigned char*)s, strlen(s), temp);
-  for(int i=0; i<SHA_DIGEST_LENGTH; i++){
+  for(int i=0; i<SHA_DIGEST_LENGTH; i++)
+  {
     sprintf((char*)&(hash[i*2]), "%02x", temp[i]);
   }
 }
 
-char* stringToBinary(char* s) {
+char* stringToBinary(char* s) 
+{
   if(s == NULL) return 0;
     size_t len = strlen(s);
     char *binary = malloc(len*8 + 1);
     binary[0] = '\0';
-    for(size_t i = 0; i < len; ++i) {
+    for(size_t i = 0; i < len; ++i) 
+    {
         char ch = s[i];
-        for(int j = 7; j >= 0; --j){
-            if(ch & (1 << j)) {
+        for(int j = 7; j >= 0; --j)
+        {
+            if(ch & (1 << j)) 
+            {
                 strcat(binary,"1");
-            } else {
+            } 
+            else 
+            {
                 strcat(binary,"0");
             }
         }
@@ -184,15 +179,15 @@ char* stringToBinary(char* s) {
     return binary;
 }
 
-
-char* remove_bits(int k, char* s){
+char* remove_bits(int k, char* s)
+{
   char* temp = s;
   temp[strlen(s)-k] = 0;
   return temp;
 }
 
-char* generate_puzzle(){
-  
+char* generate_puzzle()
+{  
   int num = random_number();
   number_to_string(num);
   hash_string(random_string);
@@ -201,4 +196,3 @@ char* generate_puzzle(){
   hash_string(binary);
   removed = remove_bits(K, binary);
 }
-

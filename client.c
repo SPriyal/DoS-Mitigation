@@ -9,11 +9,9 @@
 #define PORT 8080
 #define K 16
 
-
 long BUFFER_SIZE = 4096;
 int sock = 0;
 struct sockaddr_in address,serv_addr;
-
 
 char hash[SHA_DIGEST_LENGTH*2] = {0};
 char hash2[SHA_DIGEST_LENGTH*2] = {0};
@@ -22,14 +20,6 @@ char* result[SHA_DIGEST_LENGTH*3] = {0};
 char* pre_image[SHA_DIGEST_LENGTH*2] = {0};
 struct sockaddr_in address,serv_addr;
 void hash_string(char*);
-
-
-
-//int valread;
-//char* removed;
-
-
-
 void start_networking();
 char* receive_message();
 void send_message(char* message);
@@ -43,8 +33,8 @@ int main(int argc, char const *argv[])
     printf("Hello message sent\n");
     printf("Server Said: %s\n", receive_message());
 
-
-    while(1){
+    while(1)
+    {
       memset(&hash[0], '\0', sizeof(hash));
       strcpy(hash, receive_message());
       memset(&hash2[0], '\0', sizeof(hash2));
@@ -81,23 +71,24 @@ int main(int argc, char const *argv[])
         }
       }
     }
-
-
     return 0;
 }
 
-void send_message(char* message){
+void send_message(char* message)
+{
     send(sock, message , strlen(message) , 0 );
 }
 
-char* receive_message(){
+char* receive_message()
+{
     char* buffer = malloc(sizeof(char)*4096);
     memset(&buffer[0], '\0', sizeof(buffer));
     read( sock , buffer, BUFFER_SIZE);
     return buffer;
 }
 
-void start_networking(){
+void start_networking()
+{
    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
         printf("\n Socket creation error \n");
@@ -121,44 +112,42 @@ void start_networking(){
         printf("\nConnection Failed \n");
         return -1;
     }
-
-
 }
 
-
-int check_hashes(){
-  if(strcmp(hash, hash2) == 0){
+int check_hashes()
+{
+  if(strcmp(hash, hash2) == 0)
+  {
     return 1;
-  } else {
+  } 
+  else 
+  {
     return 0;
   }
 }
 
-char* itob(int i) {
+char* itob(int i) 
+{
    static char bits[K] = {'0'};
-   for(int i=0; i<K; i++){
+   for(int i=0; i<K; i++)
+   {
      bits[i] = '0';
    }
    int bits_index = K-1;
-   while ( i > 0 ) {
+   while ( i > 0 ) 
+   {
       bits[bits_index--] = (i & 1) + '0';
       i = ( i >> 1);
    }
    return bits;
 }
 
-
-void hash_string(char* s) {
+void hash_string(char* s) 
+{
   unsigned char temp[SHA_DIGEST_LENGTH] = {'\0'};
   SHA1((unsigned char*)s, strlen(s), temp);
-  for(int i=0; i<SHA_DIGEST_LENGTH; i++){
+  for(int i=0; i<SHA_DIGEST_LENGTH; i++)
+  {
     sprintf((char*)&(hash2[i*2]), "%02x", temp[i]);
   }
 }
-
-
-
-
-
-
-
