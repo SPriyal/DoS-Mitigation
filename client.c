@@ -7,6 +7,7 @@
 #include <openssl/sha.h>
 #include <string.h>
 #define PORT 8080
+#define K 16
 
 
 long BUFFER_SIZE = 4096;
@@ -26,7 +27,6 @@ void hash_string(char*);
 
 //int valread;
 //char* removed;
-//char guess[8];
 
 
 
@@ -58,7 +58,7 @@ int main(int argc, char const *argv[])
       send_message("Got the hash value\n");
       strcpy(pre_image, receive_message());
       
-      for(int i=0; i<65536; i++)
+      for(int i=0; i<(pow(2,K)); i++)
       {
 	      memset(&result[0], '\0', sizeof(result));
         strncpy(result, pre_image, sizeof(pre_image));
@@ -72,7 +72,7 @@ int main(int argc, char const *argv[])
           send_message("Thank you");
           break;
         } 
-        else if(i == 65535)
+        else if(i == (pow(2,K)-1))
         {
           printf("Can't solve the puzzle\n\n");
           send_message("can't solve");
@@ -135,11 +135,11 @@ int check_hashes(){
 }
 
 char* itob(int i) {
-   static char bits[16] = {'0'};
-   for(int i=0; i<16; i++){
+   static char bits[K] = {'0'};
+   for(int i=0; i<K; i++){
      bits[i] = '0';
    }
-   int bits_index = 15;
+   int bits_index = K-1;
    while ( i > 0 ) {
       bits[bits_index--] = (i & 1) + '0';
       i = ( i >> 1);
